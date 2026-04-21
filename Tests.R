@@ -17,7 +17,12 @@ library(scales)
 select <- dplyr::select
 filter <- dplyr::filter
 
-setwd("/Users/ondrejhobza/Documents/Studies/VSE/Bc. Thesis")
+project_root <- if (dir.exists("Data") && dir.exists("Output")) "." else if (dir.exists(file.path("..", "Data")) && dir.exists(file.path("..", "Output"))) ".." else "."
+data_file <- file.path(project_root, "Data", "Final Data", "Final_Thesis_Data_2000_2021.csv")
+filtered_data_file <- file.path(project_root, "Data", "Final Data", "Filtered_Thesis_Data.csv")
+tests_output_dir <- file.path(project_root, "Output", "Final", "Tests")
+dir.create(tests_output_dir, recursive = TRUE, showWarnings = FALSE)
+tests_output_file <- function(name) file.path(tests_output_dir, name)
 
 theme_simple <- theme_bw() +
   theme(
@@ -33,7 +38,7 @@ theme_simple <- theme_bw() +
 # --------------------------------------------------------------------------- #
 
 data <- read_csv(
-  "Data/Final Data/Final_Thesis_Data_2000_2021.csv",
+  data_file,
   show_col_types = FALSE
 )
 
@@ -74,7 +79,7 @@ cat("Countries :", n_distinct(data$country_code), "\n")
 cat("Years     :", n_distinct(data$year), "\n")
 cat("Obs       :", nrow(data), "\n\n")
 
-write_csv(data, "Data/Final Data/Filtered_Thesis_Data.csv")
+write_csv(data, filtered_data_file)
 
 # ! PANEL STRUCTURE AND MISSINGNESS
 # --------------------------------------------------------------------------- #
@@ -91,7 +96,7 @@ miss_tbl <- data.frame(
 )
 
 print(miss_tbl[order(-miss_tbl$pct_missing), ], row.names = FALSE)
-write_csv(miss_tbl, "Output/Final/Tests/01_missingness_summary.csv")
+write_csv(miss_tbl, tests_output_file("01_missingness_summary.csv"))
 
 
 print(summary(pdata))
@@ -124,7 +129,7 @@ total_data_coverage <- pdata %>%
 data_coverage_by_region <- bind_rows(data_coverage_by_region, total_data_coverage)
 
 print(as.data.frame(data_coverage_by_region), row.names = FALSE)
-write_csv(data_coverage_by_region, "Output/Final/Tests/01_coverage_by_region.csv")
+write_csv(data_coverage_by_region, tests_output_file("01_coverage_by_region.csv"))
 
 
 # ? Data Coverage by Year
@@ -144,7 +149,7 @@ data_coverage_by_year <- pdata %>%
   )
 
 print(as.data.frame(data_coverage_by_year), row.names = FALSE)
-write_csv(data_coverage_by_year, "Output/Final/Tests/01_coverage_by_year.csv")
+write_csv(data_coverage_by_year, tests_output_file("01_coverage_by_year.csv"))
 
 # ? Panel Observation Grid
 # --------------------------------------------------------------------------- #
@@ -165,7 +170,7 @@ p_balance <- ggplot(obs_grid, aes(x = year, y = reorder(country_code, -year), fi
   theme_simple +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
 
-ggsave("Output/Final/Tests/01_panel_balance.png", p_balance,
+ggsave(tests_output_file("01_panel_balance.png"), p_balance,
        width = 10, height = 12, dpi = 300)
 
 # ? Treatment variable distributions
@@ -184,7 +189,7 @@ p_dist_levels <- ggplot(treat_levels, aes(x = value)) +
        x = NULL, y = "Count") +
   theme_simple
 
-ggsave("Output/Final/Tests/01_treatment_distributions.png", p_dist_levels,
+ggsave(tests_output_file("01_treatment_distributions.png"), p_dist_levels,
        width = 14, height = 8, dpi = 300)
 
 
@@ -210,7 +215,7 @@ p_skew_mortality <- ggplot(mortality_long, aes(x = value)) +
   ) +
   theme_simple
 
-ggsave("Output/Final/Tests/01_mortality_skewness.png", p_skew_mortality,
+ggsave(tests_output_file("01_mortality_skewness.png"), p_skew_mortality,
        width = 14, height = 5, dpi = 300)
 
 # ? Income group composition
@@ -304,7 +309,7 @@ for (j in seq(1, length(inc_plots), by = 3)) {
   idx <- j:min(j + 2, length(inc_plots))
   strip <- wrap_plots(inc_plots[idx], ncol = 3, nrow = 1, guides = "collect") &
     theme(legend.position = "bottom")
-  ggsave(sprintf("Output/Final/Tests/01_spag_inc_panel_%02d.png", ceiling(j / 3)),
+  ggsave(tests_output_file(sprintf("01_spag_inc_panel_%02d.png", ceiling(j / 3))),
          strip, width = 20, height = 6, dpi = 300)
 }
 
@@ -313,7 +318,7 @@ for (j in seq(1, length(who_plots), by = 3)) {
   idx <- j:min(j + 2, length(who_plots))
   strip <- wrap_plots(who_plots[idx], ncol = 3, nrow = 1, guides = "collect") &
     theme(legend.position = "bottom")
-  ggsave(sprintf("Output/Final/Tests/01_spag_who_panel_%02d.png", ceiling(j / 3)),
+  ggsave(tests_output_file(sprintf("01_spag_who_panel_%02d.png", ceiling(j / 3))),
          strip, width = 20, height = 6, dpi = 300)
 }
 
@@ -387,7 +392,7 @@ cd_results <- bind_rows(
 )
 
 print(cd_results)
-write_csv(cd_results, "Output/Final/Tests/01_cd_tests_variables.csv")
+write_csv(cd_results, tests_output_file("01_cd_tests_variables.csv"))
 
 # ! CIPS UNIT ROOT TESTS
 # ? H0: all panels contain a unit root I(1)
@@ -435,7 +440,7 @@ cips_results <- data.frame(
 
 
 print(cips_results)
-write_csv(cips_results, "Output/Final/Tests/01_cips_results.csv")
+write_csv(cips_results, tests_output_file("01_cips_results.csv"))
 
 
 # LEVELS — TREND
@@ -466,7 +471,7 @@ cips_trend_results <- data.frame(
 )
 
 print(cips_trend_results)
-write_csv(cips_trend_results, "Output/Final/Tests/01_cips_results_trend.csv")
+write_csv(cips_trend_results, tests_output_file("01_cips_results_trend.csv"))
 
 
 # ! CIPS ON FIRST DIFFERENCES
@@ -529,7 +534,7 @@ cips_fd_results <- data.frame(
 
 print(cips_fd_results)
 
-write_csv(cips_fd_results, "Output/Final/Tests/01_cips_fd_results.csv")
+write_csv(cips_fd_results, tests_output_file("01_cips_fd_results.csv"))
 
 
 # ---------- Second difference (I(2)) ----------
@@ -588,6 +593,6 @@ cips_fd2_results <- data.frame(
 )
 
 print(cips_fd2_results)
-write_csv(cips_fd2_results, "Output/Final/Tests/01_cips_fd2_results.csv")
+write_csv(cips_fd2_results, tests_output_file("01_cips_fd2_results.csv"))
 
 # nolint end

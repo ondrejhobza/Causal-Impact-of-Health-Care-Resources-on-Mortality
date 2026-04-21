@@ -24,7 +24,12 @@ lgr::get_logger("mlr3")$set_threshold("warn")
 
 set.seed(42)
 
-setwd("/Users/ondrejhobza/Documents/Studies/VSE/Bc. Thesis")
+project_root <- if (dir.exists("Data") && dir.exists("Output")) "." else if (dir.exists(file.path("..", "Data")) && dir.exists(file.path("..", "Output"))) ".." else "."
+data_file <- file.path(project_root, "Data", "Final Data", "Filtered_Thesis_Data.csv")
+twfe_results_file <- file.path(project_root, "Output", "Final", "TWFE", "02_twfe_results.csv")
+dml_output_dir <- file.path(project_root, "Output", "Final", "DML")
+dir.create(dml_output_dir, recursive = TRUE, showWarnings = FALSE)
+dml_output_file <- function(name) file.path(dml_output_dir, name)
 
 theme_simple <- theme_bw() +
   theme(
@@ -40,7 +45,7 @@ theme_simple <- theme_bw() +
 # --------------------------------------------------------------------------- #
 
 data <- as.data.frame(read_csv(
-  "Data/Final Data/Filtered_Thesis_Data.csv",
+  data_file,
   show_col_types = FALSE
 ))
 
@@ -241,7 +246,7 @@ if (length(all_results) == 0L) stop("No DML models succeeded.")
 
 results_df <- bind_rows(all_results)
 rownames(results_df) <- NULL
-write_csv(results_df, "Output/Final/DML/03_dml_all_results.csv")
+write_csv(results_df, dml_output_file("03_dml_all_results.csv"))
 
 
 # ? SUMMARY TABLES
@@ -258,7 +263,7 @@ dml_lasso <- results_df %>%
   filter(learner == "LASSO") %>%
   mutate(sig = stars(p_value))
 print(dml_lasso)
-write_csv(dml_lasso, "Output/Final/DML/03_dml_lasso.csv")
+write_csv(dml_lasso, dml_output_file("03_dml_lasso.csv"))
 
 # Learner Comparison
 comp_df <- results_df %>%
@@ -276,7 +281,7 @@ colnames(comp_wide) <- gsub("coef_str\\.", "", colnames(comp_wide))
 comp_wide <- comp_wide[order(comp_wide$outcome_label, comp_wide$treat_label), ]
 
 print(comp_wide)
-write_csv(comp_wide, "Output/Final/DML/03_dml_learner_comparison.csv")
+write_csv(comp_wide, dml_output_file("03_dml_learner_comparison.csv"))
 
 # First-stage diagnostics across all learners
 firststage_diag <- results_df %>%
@@ -284,12 +289,12 @@ firststage_diag <- results_df %>%
   mutate(across(c(rmse_l, rmse_m, r2_l, r2_m), ~ round(.x, 4)))
 
 print(firststage_diag)
-write_csv(firststage_diag, "Output/Final/DML/03_dml_firststage_diagnostics.csv")
+write_csv(firststage_diag, dml_output_file("03_dml_firststage_diagnostics.csv"))
 
 # ? FD-TWFE COMPARISON
 # --------------------------------------------------------------------------- #
 
-twfe_results <- read_csv("Output/Final/TWFE/02_twfe_results.csv", show_col_types = FALSE)
+twfe_results <- read_csv(twfe_results_file, show_col_types = FALSE)
 
 twfe_comp <- twfe_results %>%
   filter(spec == "S8",
@@ -315,7 +320,7 @@ dml_comp <- dml_lasso %>%
 
 comparison <- rbind(twfe_comp, dml_comp)
 print(comparison)
-write_csv(comparison, "Output/Final/DML/03_dml_vs_twfe_comparison.csv")
+write_csv(comparison, dml_output_file("03_dml_vs_twfe_comparison.csv"))
 
 
 
@@ -369,7 +374,7 @@ p_lasso <- all_plot %>%
   ) +
   theme_simple
 
-ggsave("Output/Final/DML/03_dml_coef_lasso.png", p_lasso,
+ggsave(dml_output_file("03_dml_coef_lasso.png"), p_lasso,
        width = 14, height = 5, dpi = 300)
 
 
@@ -395,7 +400,7 @@ for (tr in names(treat_label_map)) {
     ) +
     theme_simple
 
-  ggsave(sprintf("Output/Final/DML/03_dml_learner_comparison_%s.png", tr),
+  ggsave(dml_output_file(sprintf("03_dml_learner_comparison_%s.png", tr)),
          p, width = 14, height = 5, dpi = 300)
 }
 
@@ -428,7 +433,7 @@ for (tr in names(treat_label_map)) {
     ) +
     theme_simple
 
-  ggsave(sprintf("Output/Final/DML/03_dml_vs_twfe_%s.png", tr),
+  ggsave(dml_output_file(sprintf("03_dml_vs_twfe_%s.png", tr)),
          p, width = 14, height = 4, dpi = 300)
 }
 

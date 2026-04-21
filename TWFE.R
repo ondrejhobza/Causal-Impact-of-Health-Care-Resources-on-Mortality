@@ -16,7 +16,11 @@ library(patchwork)
 select <- dplyr::select
 filter <- dplyr::filter
 
-setwd("/Users/ondrejhobza/Documents/Studies/VSE/Bc. Thesis")
+project_root <- if (dir.exists("Data") && dir.exists("Output")) "." else if (dir.exists(file.path("..", "Data")) && dir.exists(file.path("..", "Output"))) ".." else "."
+data_file <- file.path(project_root, "Data", "Final Data", "Filtered_Thesis_Data.csv")
+twfe_output_dir <- file.path(project_root, "Output", "Final", "TWFE")
+dir.create(twfe_output_dir, recursive = TRUE, showWarnings = FALSE)
+twfe_output_file <- function(name) file.path(twfe_output_dir, name)
 
 theme_simple <- theme_bw() +
   theme(
@@ -32,7 +36,7 @@ theme_simple <- theme_bw() +
 # --------------------------------------------------------------------------- #
 
 data <- as.data.frame(read_csv(
-  "Data/Final Data/Filtered_Thesis_Data.csv",
+  data_file,
   show_col_types = FALSE
 ))
 
@@ -259,7 +263,7 @@ etable(
   caption = "FD-TWFE: Log Infant Mortality",
   label = "tab:fd_twfe_infant",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_log_infant_mortality.tex",
+  file = twfe_output_file("02_twfe_log_infant_mortality.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -281,7 +285,7 @@ etable(
   caption = "FD-TWFE: Log Under-5 Mortality",
   label = "tab:fd_twfe_u5",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_log_under5_mortality.tex",
+  file = twfe_output_file("02_twfe_log_under5_mortality.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -302,7 +306,7 @@ etable(
   caption = "FD-TWFE: Log Maternal Mortality",
   label = "tab:fd_twfe_maternal",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_log_maternal_mortality.tex",
+  file = twfe_output_file("02_twfe_log_maternal_mortality.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -381,7 +385,7 @@ for (i in seq_along(all_models)) {
 }
 
 results <- do.call(rbind, results_list)
-write_csv(results, "Output/Final/TWFE/02_twfe_results.csv")
+write_csv(results, twfe_output_file("02_twfe_results.csv"))
 
 
 # # 5. ROBUSTNESS — LEVELS TWFE (country + year FE; series often non-stationary)
@@ -602,7 +606,7 @@ etable(
   caption = "Interactions (FD-TWFE): Log Infant Mortality",
   label = "tab:fd_twfe_infant_interactions",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_interactions_infant.tex",
+  file = twfe_output_file("02_twfe_interactions_infant.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -641,7 +645,7 @@ etable(
   caption = "Interactions (FD-TWFE): Log Under-5 Mortality",
   label = "tab:fd_twfe_u5_interactions",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_interactions_u5.tex",
+  file = twfe_output_file("02_twfe_interactions_u5.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -680,7 +684,7 @@ etable(
   caption = "Interactions (FD-TWFE): Log Maternal Mortality",
   label = "tab:fd_twfe_maternal_interactions",
   tex = TRUE,
-  file = "Output/Final/TWFE/02_twfe_interactions_maternal.tex",
+  file = twfe_output_file("02_twfe_interactions_maternal.tex"),
   replace = TRUE,
   adjustbox = TRUE,
   create_dirs = TRUE
@@ -742,7 +746,7 @@ p_fit <- ggplot(res_all, aes(x = fitted, y = resid)) +
   ) +
   theme_simple
 
-ggsave("Output/Final/TWFE/02_twfe_resid_vs_fitted.png",
+ggsave(twfe_output_file("02_twfe_resid_vs_fitted.png"),
        p_fit, width = 14, height = 5, dpi = 300)
 
 # 2. Residuals vs year
@@ -758,7 +762,7 @@ p_time <- ggplot(res_all, aes(x = year, y = resid)) +
   ) +
   theme_simple
 
-ggsave("Output/Final/TWFE/02_twfe_resid_vs_year.png",
+ggsave(twfe_output_file("02_twfe_resid_vs_year.png"),
        p_time, width = 14, height = 5, dpi = 300)
 
 # 3. Country-average residuals
@@ -778,7 +782,7 @@ p_country <- ggplot(country_resid, aes(x = reorder(country_code, mean_resid), y 
   ) +
   theme_simple
 
-ggsave("Output/Final/TWFE/02_twfe_country_mean_residuals.png",
+ggsave(twfe_output_file("02_twfe_country_mean_residuals.png"),
        p_country, width = 12, height = 12, dpi = 300)
 
 # 4. Simple ACF plots on pooled residuals
@@ -806,7 +810,7 @@ p_acf <- p_acf_inf + p_acf_u5 + p_acf_mat +
     theme = theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12))
   )
 
-ggsave("Output/Final/TWFE/02_twfe_residual_acf.png",
+ggsave(twfe_output_file("02_twfe_residual_acf.png"),
        p_acf, width = 14, height = 5, dpi = 300)
 
 # nolint end

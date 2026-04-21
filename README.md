@@ -14,6 +14,26 @@ The scripts focus on panel-data estimation of health-system inputs (e.g., doctor
 - `DML.R`  
   Double Machine Learning (DML) estimation using multiple learners (lasso, elastic net, random forest, neural network) and result comparison.
 
+## Required R Packages
+
+Install these packages before running the scripts:
+
+- `dplyr`
+- `fixest`
+- `ggplot2`
+- `ggrepel`
+- `lmtest`
+- `mlr3`
+- `mlr3learners`
+- `mlr3torch`
+- `patchwork`
+- `plm`
+- `readr`
+- `sandwich`
+- `scales`
+- `tidyr`
+- `xtdml`
+
 ## Expected Project Structure
 
 The scripts assume they are run from a thesis project root like:
@@ -30,5 +50,5 @@ The scripts assume they are run from a thesis project root like:
 
 ## Notes
 
-- The scripts currently contain a fixed local working directory path via `setwd(...)`.
-- Before running on another machine, update `setwd(...)` to match your local thesis project path.
+- Scripts use project-relative path detection (`.` or `..`) with no hardcoded personal directories.
+- You can run scripts either from thesis root or from `Scripts Final`.
