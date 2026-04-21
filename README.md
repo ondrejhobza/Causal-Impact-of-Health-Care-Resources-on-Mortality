@@ -49,6 +49,4 @@ The scripts assume they are run from a thesis project root like:
 3. Run `DML.R` for DML estimations and robustness comparison.
 
 ## Notes
-
-- Scripts use project-relative path detection (`.` or `..`) with no hardcoded personal directories.
-- You can run scripts either from thesis root or from `Scripts Final`.
+- Setup `setwd()` before running scripts to ensure correct file paths.
