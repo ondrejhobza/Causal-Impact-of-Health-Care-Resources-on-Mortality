@@ -1,7 +1,7 @@
 # Scripts
 
 This folder contains the final R scripts used for empirical analysis in the bachelor thesis.
-The scripts focus on panel-data estimation of health-system inputs (e.g., doctors and health expenditure) and mortality outcomes.
+The scripts focus on panel-data estimation of health-system inputs (e.g., physicians and health expenditure) and mortality outcomes.
 
 ## Folder Contents
 
@@ -12,15 +12,7 @@ The scripts focus on panel-data estimation of health-system inputs (e.g., doctor
   Main first-difference two-way fixed effects (FD-TWFE) model specifications and related output/visualization steps.
 
 - `DML.R`  
-  Double Machine Learning (DML) estimation using multiple learners (lasso, elastic net, random forest, neural network) and result comparison.
-
-## Expected Project Structure
-
-The scripts assume they are run from a thesis project root like:
-
-- `Data/Final Data/Final_Thesis_Data_2000_2021.csv`
-- `Data/Final Data/Filtered_Thesis_Data.csv` (created by `Tests.R`)
-- `Output/Final/...` (created/used by scripts for saved tables and figures)
+  Double/Debiased Machine Learning (DML) estimation using multiple learners (lasso, elastic net, random forest, neural network) and result comparison.
 
 ## Recommended Execution Order
 
@@ -30,5 +22,4 @@ The scripts assume they are run from a thesis project root like:
 
 ## Notes
 
-- The scripts currently contain a fixed local working directory path via `setwd(...)`.
 - Before running on another machine, update `setwd(...)` to match your local thesis project path.
