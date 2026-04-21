@@ -1,4 +1,4 @@
-# Thesis Scripts (Final)
+# Scripts
 
 This folder contains the final R scripts used for empirical analysis in the bachelor thesis.
 The scripts focus on panel-data estimation of health-system inputs (e.g., doctors and health expenditure) and mortality outcomes.
