@@ -34,14 +34,6 @@ Install these packages before running the scripts:
 - `tidyr`
 - `xtdml`
 
-## Expected Project Structure
-
-The scripts assume they are run from a thesis project root like:
-
-- `Data/Final Data/Final_Thesis_Data_2000_2021.csv`
-- `Data/Final Data/Filtered_Thesis_Data.csv` (created by `Tests.R`)
-- `Output/Final/...` (created/used by scripts for saved tables and figures)
-
 ## Recommended Execution Order
 
 1. Run `Tests.R` to prepare and validate the analysis sample.
