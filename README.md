@@ -1,7 +1,7 @@
-# Thesis Scripts (Final)
+# Scripts
 
 This folder contains the final R scripts used for empirical analysis in the bachelor thesis.
-The scripts focus on panel-data estimation of health-system inputs (e.g., doctors and health expenditure) and mortality outcomes.
+The scripts focus on panel-data estimation of health-system inputs (e.g., physicians and health expenditure) and mortality outcomes.
 
 ## Folder Contents
 
@@ -12,7 +12,7 @@ The scripts focus on panel-data estimation of health-system inputs (e.g., doctor
   Main first-difference two-way fixed effects (FD-TWFE) model specifications and related output/visualization steps.
 
 - `DML.R`  
-  Double Machine Learning (DML) estimation using multiple learners (lasso, elastic net, random forest, neural network) and result comparison.
+  Double/Debiased Machine Learning (DML) estimation using multiple learners (lasso, elastic net, random forest, neural network) and result comparison.
 
 ## Required R Packages
 
