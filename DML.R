@@ -63,11 +63,11 @@ cat("Rows:", nrow(data), "\n\n")
 # ? SPECIFICATIONS
 # --------------------------------------------------------------------------- #
 
-controls_vars <- c(year_x, "nursing_per_10k", "hospital_beds_per_1k", "log_gdp", "fertility_rate", "urban_population_pct",
+controls_vars <- c(year_x, "log_nursing_per_10k", "log_hospital_beds_per_1k", "log_gdp", "fertility_rate", "urban_population_pct",
               "population_growth_pct", "unemployment_rate")
 
 x_doctors <- c("log_health_exp", controls_vars)
-x_hexp    <- c("doctors_per_10k", controls_vars)
+x_hexp    <- c("log_doctors_per_10k", controls_vars)
 
 
 # ? LEARNERS
